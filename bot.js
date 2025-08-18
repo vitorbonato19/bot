@@ -7,7 +7,7 @@ const {
 } = require('discord.js');
 require('dotenv').config();
 
-const { handleMessage, handleInteraction } = require('./handlers');
+const { handleMessage, handleInteraction } = require('./main/handlers');
 
 const client = new Client({
   intents: [
@@ -31,4 +31,6 @@ client.on('interactionCreate', async (interaction) => {
   await handleInteraction(interaction);
 });
 
+console.log('🔗 Conectando ao Discord...');
+console.log(`🔗 Usando token: ${process.env.DISCORD_TOKEN}`);
 client.login(process.env.DISCORD_TOKEN);
