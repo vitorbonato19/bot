@@ -1,7 +1,7 @@
-const { userFilters, userStep, askNextQuestion, handleFilterAnswer } = require('./filterQuestionsHandler');
+const { userFilters, userStep, askNextQuestion, handleFilterAnswer, handleReset } = require('./filterQuestionsHandler');
 
 async function handleInteraction(interaction) {
-  if (!interaction.isStringSelectMenu()) return;
+  if (!interaction.isStringSelectMenu() && !interaction.isButton()) return;
 
   // caso: escolha de plataforma
   if (interaction.customId === 'plataformas') {
@@ -28,6 +28,12 @@ async function handleInteraction(interaction) {
   // caso: resposta de filtro
   if (interaction.customId.startsWith('question_')) {
     await handleFilterAnswer(interaction);
+    return;
+  }
+
+  // caso: botão de reset
+  if (interaction.customId === 'reset_chat') {
+    await handleReset(interaction);
     return;
   }
 }

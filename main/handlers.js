@@ -1,14 +1,11 @@
 const { handleGreeting } = require('./greetingHandler');
 const { handleInteraction } = require('./interactionHandler');
-const { handleFilterAnswer } = require('./filterQuestionsHandler');
+const { handleFilterAnswer, userStep, userFilters } = require('./filterQuestionsHandler');
 
 async function handleMessage(client, message) {
   if (message.author.bot) return;
 
   const userId = message.author.id;
-
-  // Supondo que você tenha um controle global para estado do usuário, importado aqui
-  const { userStep } = require('./filterQuestionsHandler');
 
   if (userStep.has(userId)) {
     await handleFilterAnswer(message);
@@ -19,6 +16,12 @@ async function handleMessage(client, message) {
 
   if (content === 'oi' || content === 'olá' || content === 'oii' || content === 'e aí') {
     await handleGreeting(message);
+  } else if (content === 'reset') {
+    // Reseta os dados do usuário
+    userStep.delete(userId);
+    userFilters.delete(userId);
+    await handleGreeting(message); // Reinicia com a saudação
+    await message.reply('✅ Chat resetado! Vamos começar de novo.');
   }
 }
 

@@ -1,5 +1,6 @@
 const { ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 const { userFilters, userStep, askNextQuestion } = require('./filterQuestionsHandler');
+const { getUser } = require('../api/webhook/routes/class');
 
 const plataformasOptions = [
   { label: 'Steam 🔥', value: 'steam', description: 'Jogos da Steam' },
@@ -11,7 +12,7 @@ const MENU_IDS = {
   PLATAFORMAS: 'plataformas',
 };
 
-async function handleGreeting(message) {
+async function handleGreeting(message, userId) {
   const row = new ActionRowBuilder().addComponents(
     new StringSelectMenuBuilder()
       .setCustomId(MENU_IDS.PLATAFORMAS)
@@ -19,10 +20,17 @@ async function handleGreeting(message) {
       .addOptions(plataformasOptions),
   );
 
+  let user = getUser(userId);
+  console.log(user);
+
   await message.reply({
-    content: `👋 Olá **${message.author.username}**! Tudo certo por aí?\n\n💬 Me diga, em qual plataforma deseja ver ofertas de jogos hoje? Escolha abaixo 👇`,
+    content: `👋 Olá **${message.author.username ? message.author.username : user.username}**! Tudo certo por aí?
+    Sou o bot da ** Game Accounts ** e estou aqui para te ajudar a encontrar as melhores contas com os melhores preços! 🎉
+    💬 Me diga, em qual plataforma deseja ver ofertas de jogos hoje ? Escolha abaixo 👇`,
     components: [row],
   });
+
+
 }
 
 // 👉 Novo: trata seleção de plataforma
@@ -43,7 +51,7 @@ async function handlePlatformSelection(interaction) {
 
   // confirma escolha e inicia questionário
   await interaction.update({
-    content: `✅ Plataforma **${plataforma}** escolhida! Agora vou te fazer algumas perguntas para conseguir as melhores contas.`,
+    content: `✅ Plataforma ** ${plataforma} ** escolhida! Agora vou te fazer algumas perguntas para conseguir as melhores contas.`,
     components: [],
   });
 

@@ -5,9 +5,15 @@ const {
   ActionRowBuilder,
   StringSelectMenuBuilder
 } = require('discord.js');
-require('dotenv').config();
+require('dotenv').config({ debug: false });
 
 const { handleMessage, handleInteraction } = require('./main/handlers');
+
+const { setDiscordClient } = require('./api/webhook/routes/routes');
+
+// Depois de criar o client
+
+
 
 const client = new Client({
   intents: [
@@ -20,7 +26,7 @@ const client = new Client({
 });
 
 client.once('ready', () => {
-  console.log(`✅ Bot online como ${client.user.tag}`);
+  console.log(`✅ Bot online como ${client.user.username}`);
 });
 
 client.on('messageCreate', async (message) => {
@@ -32,5 +38,7 @@ client.on('interactionCreate', async (interaction) => {
 });
 
 console.log('🔗 Conectando ao Discord...');
-console.log(`🔗 Usando token: ${process.env.DISCORD_TOKEN}`);
 client.login(process.env.DISCORD_TOKEN);
+console.log('✅ Discord conectado!');
+console.log('🔗 Configurando webhook...');
+setDiscordClient(client);

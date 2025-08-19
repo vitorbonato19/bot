@@ -4,19 +4,33 @@ const API_BASE_URL = 'https://prod-api.lzt.market';
 
 async function fetchAccountsByPlatform(platform, token, filters = {}) {
   try {
-    const { data } = await axios.get(`${API_BASE_URL}/${platform}`, {
+    // Monta os parâmetros da URL a partir dos filtros
+    const params = { ...filters };
+    Object.keys(params).forEach(key => {
+      if (params[key] === null || params[key] === undefined || params[key] === '' || params[key] === 'none') {
+        delete params[key];
+      }
+    });
+
+    // Constrói a URL completa com os parâmetros
+    const url = `${API_BASE_URL}/${platform}`;
+    const fullUrl = axios.getUri({
+      url: url,
+      params: params,
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      params: filters, // 🔑 envia os filtros como query params
     });
 
-    const url = axios.getUri({
-      url: `${API_BASE_URL}/${platform}`,
-      ...config,
-    });
+    console.log(`URL de requisição: ${fullUrl}`);
 
-    console.log(`URL de requisicao: ${url}`);
+    // Faz a requisição
+    const { data } = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: params,
+    });
 
     return data.items || [];
   } catch (error) {
